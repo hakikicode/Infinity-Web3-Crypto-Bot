@@ -36,7 +36,9 @@ const tasks = [
     { id: 14, name: 'Retweet Post', url: 'https://x.com/smart_openet/status/1852699448167497981', points: 50, icon: 'fab fa-twitter' },
     { id: 16, name: 'Join KOII', url: 'https://www.koii.network/node?refCode=8515EA3E5A67', points: 50, icon: 'fab fa-globe' },
     { id: 17, name: 'Follow on Instagram', url: 'https://www.instagram.com/smart_openet/', points: 50, icon: 'fab fa-instagram' },
-    { id: 18, name: 'Join Task To Earn Channel', url: 'https://t.me/+hrdoqZlGn1k2MTRk', points: 50, icon: 'fab fa-telegram' }
+    { id: 18, name: 'Join Task To Earn Channel', url: 'https://t.me/+hrdoqZlGn1k2MTRk', points: 50, icon: 'fab fa-telegram' },
+    { id: 15, name: 'Connect TON Wallet', type: 'tonWallet', points: 100, icon: 'fas fa-wallet' },
+    { id: 16, name: 'Add KOII Wallet Address', type: 'koiiWallet', points: 100, icon: 'fas fa-wallet' }
 ];
 
 // Render tasks
@@ -64,6 +66,51 @@ function renderTasks() {
             contentArea.appendChild(taskElement);
         }
     });
+}
+
+// Handle special tasks
+function joinTask(taskId) {
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+        if (task.type === 'tonWallet') {
+            connectTonWallet();
+        } else if (task.type === 'koiiWallet') {
+            addKoiiWalletAddress();
+        } else {
+            openTaskLink(task);
+        }
+    }
+}
+
+// Task: Connect TON Wallet
+function connectTonWallet() {
+    alert("Connecting TON Wallet. Please follow the instructions on the screen.");
+    // Simulated TON wallet connection. Replace with actual TON Wallet SDK connection logic if available
+    const connected = confirm("Did you successfully connect your TON Wallet?");
+    if (connected) {
+        completeTask(15);
+    }
+}
+
+// Task: Add KOII Wallet Address
+function addKoiiWalletAddress() {
+    const koiiWalletAddress = prompt("Please enter your KOII Wallet address:");
+    if (koiiWalletAddress) {
+        // Submit KOII address to server
+        const userId = window.userModule.userData.userId; // Retrieve user ID from user module
+
+        fetch('/add_koii_address', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId, koiiWalletAddress })
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            completeTask(16);
+        })
+        .catch(error => console.error('Error adding KOII Wallet Address:', error));
+    }
 }
 
 // Join task
@@ -143,7 +190,7 @@ function copyReferralLink() {
 }
 
 function generateReferralLink(userId) {
-    const baseUrl = "https://t.me/InfinityWeb3CryptoBot/app?startapp=";
+    const baseUrl = "https://t.me/SmartSocialTaskBot/app?startapp=";
     return baseUrl + userId;
 }
 

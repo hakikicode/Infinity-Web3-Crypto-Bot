@@ -2,11 +2,11 @@ const TelegramBot = require('node-telegram-bot-api');
 const { MongoClient } = require('mongodb');
 const crypto = require('crypto');
 
-const token = '7958900533:AAFsGItP7FovyBxjaxpJ-36bz9Qnb5TUVDc';
+const token = '';
 const bot = new TelegramBot(token, { polling: true });
-const uri = "mongodb+srv://hakikicode:jCSiUYPm8C8x5c7h@smartbot.nzkis.mongodb.net/?retryWrites=true&w=majority&appName=smartbot";
+const uri = "";
 const client = new MongoClient(uri);
-const webAppBaseUrl = 'https://smart-click-game.vercel.app/';
+const webAppBaseUrl = 'https://app.likhon.xyz/';
 
 async function connectToMongo() {
   try {
@@ -51,9 +51,9 @@ bot.onText(/\/start/, async (msg) => {
       user = { userId, username, points: 0, completedTasks: [], referredBy: null, referralCode: userId.toString(), lastPointUpdate: new Date(), joinDate: new Date() };
       await userCollection.insertOne(user);
     }
-    const referralLink = `https://t.me/SmartSocialTaskBot?start=${user.referralCode}`;
+    const referralLink = `https://t.me/InfinityWeb3CryptoBot?start=${user.referralCode}`;
     const webAppUrl = generateWebAppUrl(msg.from);
-    const message = `🚀 Welcome to SMART Social Task Bot, ${username}!\n\n📊 Points: ${user.points}\n💰 Earn 100 points per referral!\n✨ Start your crypto journey now!`;
+    const message = `🚀 Welcome to Infinity Web3 Crypto Bot, ${username}!\n\n📊 Points: ${user.points}\n💰 Earn 100 points per referral!\n✨ Start your crypto journey now!`;
     const keyboard = {
       keyboard: [
         [{ text: "🌐 Open Web App", web_app: { url: webAppUrl } }],
@@ -81,7 +81,7 @@ bot.on('message', async (msg) => {
       const user = await userCollection.findOne({ userId: userId });
 
       if (user) {
-        const referralLink = `https://t.me/SmartSocialTaskBot?start=${user.referralCode}`;
+        const referralLink = `https://t.me/InfinityWeb3CryptoBot?start=${user.referralCode}`;
         const message = `Here's your unique referral link:\n\n${referralLink}\n\nShare this link with your friends. When they join using your link, you'll earn 100 points!`;
         await bot.sendMessage(chatId, message);
       } else {

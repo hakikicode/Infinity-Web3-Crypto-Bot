@@ -62,14 +62,14 @@ def handle_referral_link(update: Update, context: CallbackContext) -> None:
                 update.message.reply_text(f"Your referrer {update.effective_user.id} received a bonus of 10 points.")
 
         # Generate the referral link in the desired format
-        referral_link = f"https://t.me/SmartSocialTaskBot?start=r{user_id}"
+        referral_link = f"https://t.me/NameOfTheBot?start=r{user_id}"
         keyboard = [[InlineKeyboardButton("Referral Link", url=referral_link)]]
         reply_markup = InlineKeyboardMarkup(keyboard)
         update.message.reply_text("Here's your referral link:", reply_markup=reply_markup)
 
     elif referral_link.startswith('/start'):
         # Send a welcome message with the web app link
-        update.message.reply_text(f"Welcome! Visit our web app: https://ipfs.io/ipfs/QmcJwn2wL5gL2MFugqZW7SUyBNtrmh19W8a5cpxnPG2rRt/")
+        update.message.reply_text(f"Welcome! Visit our web app: https://3e88-103-153-175-140.ngrok-free.app/")
         logging.info("Sent welcome message with web app link.")
     
     else:
@@ -78,7 +78,7 @@ def handle_referral_link(update: Update, context: CallbackContext) -> None:
 
 def main() -> None:
     # Create the Updater and pass it your bot's token
-    updater = Updater("7958900533:AAFsGItP7FovyBxjaxpJ-36bz9Qnb5TUVDc", use_context=True)
+    updater = Updater("7387882407:AAFUh9_E5-aq-xzpn1n_Z2eGm1EpO9s0caw", use_context=True)
 
     # Get the dispatcher to register handlers
     dispatcher = updater.dispatcher

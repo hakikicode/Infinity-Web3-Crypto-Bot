@@ -30,7 +30,7 @@ async function fetchUserData(userId) {
 }
 
 function generateReferralLink(userId) {
-    const baseUrl = "https://t.me/SmartSocialTaskBot/app?startapp=";
+    const baseUrl = "https://t.me/InfinityWeb3CryptoBot/app?startapp=";
     return baseUrl + userId;
 }
 

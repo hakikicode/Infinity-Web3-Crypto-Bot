@@ -5,10 +5,10 @@ const { MongoClient } = require('mongodb');
 const app = express();
 const port = 3000;
 
-const botToken = '7958900533:AAFsGItP7FovyBxjaxpJ-36bz9Qnb5TUVDc';
+const botToken = '';
 const bot = new TelegramBot(botToken, { polling: false });
 
-const uri = "mongodb+srv://hakikicode:jCSiUYPm8C8x5c7h@smartbot.nzkis.mongodb.net/?retryWrites=true&w=majority&appName=smartbot";
+const uri = "";
 const client = new MongoClient(uri);
 
 async function connectToDatabase() {

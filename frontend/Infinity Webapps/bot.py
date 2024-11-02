@@ -18,9 +18,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Configuration
-TOKEN = '7958900533:AAFsGItP7FovyBxjaxpJ-36bz9Qnb5TUVDc'
-MONGO_URI = "mongodb+srv://hakikicode:jCSiUYPm8C8x5c7h@smartbot.nzkis.mongodb.net/?retryWrites=true&w=majority&appName=smartbot"
-WEB_APP_BASE_URL = 'https://smart-click-game.vercel.app/'
+TOKEN = ''
+MONGO_URI = ""
+WEB_APP_BASE_URL = 'https://app.likhon.xyz/'
 POINTS_PER_REFERRAL = 100
 
 # MongoDB setup
@@ -67,12 +67,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
 
         web_app_url = generate_web_app_url(user)
-        referral_link = f"https://t.me/SmartSocialTaskBot?start={user_data['referral_code']}"
+        referral_link = f"https://t.me/InfinityWeb3CryptoBot?start={user_data['referral_code']}"
         short_referral_link = await generate_short_link(referral_link)
 
         message = (
-            f"🚀 Welcome to SMART Social Task Bot, {username}!\n"
-            f"🌟 Dive into the world of SMART Token and earn rewards as you complete social task & learn and explore.\n\n"
+            f"🚀 Welcome to Infinity Web3 Crypto Bot, {username}!\n"
+            f"🌟 Dive into the world of crypto and earn rewards as you learn and explore.\n\n"
             f"📊 Points: {user_data['points']}\n"
             f"💰 Earn {POINTS_PER_REFERRAL} points for each referral you make!\n"
             f"✨ Start your crypto journey now and maximize your earnings through various activities."
@@ -84,10 +84,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             [InlineKeyboardButton("📊 My Stats", callback_data="my_stats")],
             [InlineKeyboardButton("ℹ️ How to Earn", callback_data="how_to_earn")],
             [InlineKeyboardButton("🎯 Daily Task", callback_data="daily_task")],
-            [InlineKeyboardButton("🌍 Visit Our Website", url="https://nativeopen.x/")],
-            [InlineKeyboardButton("📢 Join Our Telegram", url="https://t.me/depinsdirect")],
-            [InlineKeyboardButton("👨‍💻 Follow Us on Instagram", url="https://www.instagram.com/smart_openet/")],
-            [InlineKeyboardButton("🐦 Follow Us on Twitter", url="https://twitter.com/smart_openet")]
+            [InlineKeyboardButton("🌍 Visit Our Website", url="https://infbsc.xyz/")],
+            [InlineKeyboardButton("📢 Join Our Telegram", url="https://t.me/Inf_bsc")],
+            [InlineKeyboardButton("👨‍💻 Visit Our GitHub", url="https://github.com/infbsc")],
+            [InlineKeyboardButton("🐦 Follow Us on Twitter", url="https://twitter.com/Inf_bsc")]
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         await update.message.reply_text(message, reply_markup=reply_markup)
@@ -121,7 +121,7 @@ async def handle_referral_link(update: Update, context: ContextTypes.DEFAULT_TYP
         user_data = users_collection.find_one({"user_id": user_id})
 
         if user_data:
-            referral_link = f"https://t.me/SmartSocialTaskBot?start={user_data['referral_code']}"
+            referral_link = f"https://t.me/InfinityWeb3CryptoBot?start={user_data['referral_code']}"
             short_referral_link = await generate_short_link(referral_link)
             message = (
                 f"🎉 Here's your unique referral link:\n\n{short_referral_link}\n\n"
@@ -190,7 +190,7 @@ async def handle_copy_link(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         user_data = users_collection.find_one({"user_id": user_id})
 
         if user_data:
-            referral_link = f"https://t.me/SmartSocialTaskBot?start={user_data['referral_code']}"
+            referral_link = f"https://t.me/InfinityWeb3CryptoBot?start={user_data['referral_code']}"
             short_referral_link = await generate_short_link(referral_link)
             message = f"Here's your referral link:\n\n{short_referral_link}\n\nIt has been copied to your clipboard."
             await update.callback_query.answer("Link copied to clipboard!")
