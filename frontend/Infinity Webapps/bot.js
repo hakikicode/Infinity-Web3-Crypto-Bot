@@ -1,98 +1,33 @@
-const TelegramBot = require('node-telegram-bot-api');
-const { MongoClient } = require('mongodb');
-const crypto = require('crypto');
+const { Telegraf } = require('telegraf');
+const User = require('./User');
+const { verifyTelegramTask } = require('./verifyController');
+const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 
-const token = '';
-const bot = new TelegramBot(token, { polling: true });
-const uri = "";
-const client = new MongoClient(uri);
-const webAppBaseUrl = 'https://app.likhon.xyz/';
+bot.start((ctx) => ctx.reply("Welcome to the Task App! Complete tasks and earn rewards."));
 
-async function connectToMongo() {
-  try {
-    await client.connect();
-    console.log("MongoDB connection successful.");
-  } catch (error) {
-    console.error("MongoDB connection failed:", error);
-  }
-}
-
-connectToMongo();
-
-function generateWebAppUrl(user) {
-  const userData = {
-    id: user.id,
-    first_name: user.first_name,
-    last_name: user.last_name || "",
-    username: user.username,
-    language_code: user.language_code,
-    is_premium: user.is_premium || false,
-    allows_write_to_pm: true
-  };
-  const chatInstance = Date.now().toString();
-  const authDate = Math.floor(Date.now() / 1000);
-  const dataCheckString = Object.keys(userData).sort().map(key => `${key}=${userData[key]}`).join('\n');
-  const secretKey = crypto.createHmac('sha256', bot.token).digest();
-  const hash = crypto.createHmac('sha256', secretKey).update(`auth_date=${authDate}\nchat_instance=${chatInstance}\nuser=${dataCheckString}`).digest('hex');
-  const tgWebAppData = { user: userData, chat_instance: chatInstance, auth_date: authDate, hash: hash };
-  const encodedData = encodeURIComponent(JSON.stringify(tgWebAppData));
-  const webAppUrl = `${webAppBaseUrl}#tgWebAppData=${encodedData}`;
-  return webAppUrl;
-}
-
-bot.onText(/\/start/, async (msg) => {
-  const chatId = msg.chat.id;
-  const userId = msg.from.id;
-  const username = msg.from.username || "Anonymous";
-  try {
-    const userCollection = client.db("taskapp").collection("users");
-    let user = await userCollection.findOne({ userId: userId });
-    if (!user) {
-      user = { userId, username, points: 0, completedTasks: [], referredBy: null, referralCode: userId.toString(), lastPointUpdate: new Date(), joinDate: new Date() };
-      await userCollection.insertOne(user);
-    }
-    const referralLink = `https://t.me/InfinityWeb3CryptoBot?start=${user.referralCode}`;
-    const webAppUrl = generateWebAppUrl(msg.from);
-    const message = `🚀 Welcome to Infinity Web3 Crypto Bot, ${username}!\n\n📊 Points: ${user.points}\n💰 Earn 100 points per referral!\n✨ Start your crypto journey now!`;
-    const keyboard = {
-      keyboard: [
-        [{ text: "🌐 Open Web App", web_app: { url: webAppUrl } }],
-        [{ text: "🔗 My Referral Link" }, { text: "📊 My Stats" }],
-        [{ text: "ℹ️ How to Earn" }, { text: "🎯 Daily Task" }]
-      ],
-      resize_keyboard: true,
-      one_time_keyboard: false
-    };
-    await bot.sendMessage(chatId, message, { parse_mode: 'HTML', reply_markup: JSON.stringify(keyboard) });
-    await bot.setChatMenuButton(chatId, { type: 'web_app', text: 'Open Web App', web_app: { url: webAppUrl } });
-  } catch (error) {
-    console.error("Error in /start command:", error);
-    await bot.sendMessage(chatId, "Error occurred. Please try again later or contact support.");
-  }
+bot.command('referral', async (ctx) => {
+    const userId = ctx.from.id;
+    const referralLink = `https://t.me/SmartSocialTaskBot?start=${userId}`;
+    await ctx.reply(`Share this referral link with friends to earn extra rewards: ${referralLink}`);
 });
 
-bot.on('message', async (msg) => {
-  if (msg.text === "🔗 My Referral Link") {
-    const chatId = msg.chat.id;
-    const userId = msg.from.id;
-
-    try {
-      const userCollection = client.db("taskapp").collection("users");
-      const user = await userCollection.findOne({ userId: userId });
-
-      if (user) {
-        const referralLink = `https://t.me/InfinityWeb3CryptoBot?start=${user.referralCode}`;
-        const message = `Here's your unique referral link:\n\n${referralLink}\n\nShare this link with your friends. When they join using your link, you'll earn 100 points!`;
-        await bot.sendMessage(chatId, message);
-      } else {
-        await bot.sendMessage(chatId, "Sorry, we couldn't find your user information. Please try starting the bot again with /start.");
-      }
-    } catch (error) {
-      console.error("Error generating referral link:", error);
-      await bot.sendMessage(chatId, "An error occurred while generating your referral link. Please try again later.");
+bot.command('wallet', async (ctx) => {
+    const walletAddress = ctx.message.text.split(' ')[1];
+    const userId = ctx.from.id;
+    if (walletAddress) {
+        await User.findOneAndUpdate({ userId }, { walletAddress }, { upsert: true });
+        ctx.reply("Your TON Wallet is connected!");
+    } else {
+        ctx.reply("Please provide a valid wallet address.");
     }
-  }
-  // Handle other button clicks or messages here
 });
 
-console.log('Bot is running...');
+bot.on('message', async (ctx) => {
+    // Verify Telegram task on message
+    const userId = ctx.from.id;
+    const message = ctx.message.text;
+    const verified = await verifyTelegramTask(userId, message);
+    if (verified) ctx.reply("Task verified! Points have been awarded.");
+});
+
+module.exports = bot;
